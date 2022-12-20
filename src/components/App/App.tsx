@@ -1,7 +1,12 @@
+import Container from '@mui/material/Container/Container';
+import MainPage from '../../pages/MainPage';
+
 const App = () => {
 	return (
 		<div className='App'>
-			<h1>fdfd</h1>
+			<Container maxWidth='sm'>
+				<MainPage />
+			</Container>
 		</div>
 	);
 };
