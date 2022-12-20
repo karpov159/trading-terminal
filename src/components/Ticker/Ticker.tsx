@@ -8,12 +8,12 @@ import MenuItem from '@mui/material/MenuItem/MenuItem';
 import CurrencyData from '../../shared/interfaces/currencyData.interface';
 
 interface TickerProps {
-	setCurrency: Dispatch<SetStateAction<string>>;
+	setInstrument: Dispatch<SetStateAction<string>>;
 	currenciesData: CurrencyData[];
-	currency: string;
+	instrument: string;
 }
 
-const Ticker = ({ setCurrency, currenciesData, currency }: TickerProps) => {
+const Ticker = ({ setInstrument, currenciesData, instrument }: TickerProps) => {
 	const now = moment().format('HH:mm:ss');
 	const [time, setTime] = useState<string>(now);
 
@@ -30,7 +30,7 @@ const Ticker = ({ setCurrency, currenciesData, currency }: TickerProps) => {
 	}, []);
 
 	const handleChange = (e: SelectChangeEvent) => {
-		setCurrency(e.target.value as string);
+		setInstrument(e.target.value as string);
 	};
 
 	return (
@@ -50,7 +50,7 @@ const Ticker = ({ setCurrency, currenciesData, currency }: TickerProps) => {
 					<Select
 						labelId='demo-simple-select-label'
 						id='demo-simple-select'
-						value={currency}
+						value={instrument}
 						displayEmpty
 						onChange={handleChange}>
 						<MenuItem value=''>

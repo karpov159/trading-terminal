@@ -6,12 +6,15 @@ import TabPanel from '../components/TabPanel/TabPanel';
 import Ticker from '../components/Ticker/Ticker';
 import CurrencyData from '../shared/interfaces/currencyData.interface';
 import PriceBox from '../components/PriceBox/PriceBox';
+import OrderData from '../shared/interfaces/order.interface';
+import Archive from '../components/Archive/Archive';
 
 const MainPage = () => {
 	const [tab, setTab] = useState<number>(0);
 	const [buyValue, setBuyValue] = useState<string>('0');
 	const [sellValue, setSellValue] = useState<string>('0');
-	const [currency, setCurrency] = useState<string>('');
+	const [instrument, setInstrument] = useState<string>('');
+	const [orders, setOrders] = useState<OrderData[]>([]);
 
 	const currenciesData: CurrencyData[] = [
 		{
@@ -36,7 +39,7 @@ const MainPage = () => {
 		const buyValue = (Math.random() * (2 - 0)).toFixed(4);
 		const sellValue = (
 			+buyValue -
-			(Math.random() * (0.03 * 0.003) + 0.003)
+			(Math.random() * (0.03 - 0.003) + 0.003)
 		).toFixed(4);
 
 		setBuyValue(buyValue);
@@ -46,7 +49,7 @@ const MainPage = () => {
 
 	useEffect(() => {
 		randomValues();
-	}, [currency]);
+	}, [instrument]);
 
 	useEffect(() => {
 		const timeout = setInterval(() => {
@@ -62,44 +65,65 @@ const MainPage = () => {
 		setTab(newValue);
 	};
 
+	const addOrder = (order: OrderData) => {
+		setOrders([...orders, order]);
+	};
+
 	return (
-		<Box sx={{ width: '100%' }}>
-			<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-				<Tabs
-					value={tab}
-					onChange={handleChange}
-					aria-label='basic tabs example'>
-					<Tab label='Trading' />
+		<>
+			<Box sx={{ width: '100%' }}>
+				<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+					<Tabs
+						value={tab}
+						onChange={handleChange}
+						aria-label='basic tabs example'>
+						<Tab label='Trading' />
 
-					<Tab label='Archive' />
-				</Tabs>
-			</Box>
-
-			<TabPanel value={tab} index={0}>
-				<Ticker
-					currenciesData={currenciesData}
-					currency={currency}
-					setCurrency={setCurrency}
-				/>
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'row',
-						alignItems: 'center',
-						justifyContent: 'space-between',
-						paddingLeft: 10,
-						paddingRight: 10,
-						mt: 4,
-					}}>
-					<PriceBox title='BUY' value={buyValue} />
-					<PriceBox title='SELL' value={sellValue} />
+						<Tab label='Archive' />
+					</Tabs>
 				</Box>
-			</TabPanel>
 
-			<TabPanel value={tab} index={1}>
-				arcs
-			</TabPanel>
-		</Box>
+				<TabPanel value={tab} index={0}>
+					<Ticker
+						currenciesData={currenciesData}
+						instrument={instrument}
+						setInstrument={setInstrument}
+					/>
+
+					<Box
+						sx={{
+							display: 'flex',
+							flexDirection: 'row',
+							alignItems: 'center',
+							justifyContent: 'space-between',
+							paddingLeft: 10,
+							paddingRight: 10,
+							mt: 4,
+						}}>
+						{instrument ? (
+							<>
+								<PriceBox
+									title='Buy'
+									price={buyValue}
+									instrument={instrument}
+									addOrder={addOrder}
+								/>
+								<PriceBox
+									title='Sell'
+									price={sellValue}
+									instrument={instrument}
+									addOrder={addOrder}
+								/>
+							</>
+						) : null}
+					</Box>
+				</TabPanel>
+
+				<TabPanel value={tab} index={1}>
+					<Archive />
+				</TabPanel>
+			</Box>
+		</>
 	);
 };
 
