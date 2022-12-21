@@ -33,6 +33,7 @@ const ModalDialog = ({ open, handleClose, price, title }: ModalDialogProps) => {
 	const onSubmit = () => {
 		if (!isNaN(+volume) && volume.length > 0) {
 			const timestamp = moment().format('YYYY.MM.DD HH:mm:ss');
+
 			const id = Math.max(...orders.map((order) => order.id), 0) + 1;
 
 			const newOrder: OrderData = {
@@ -45,7 +46,12 @@ const ModalDialog = ({ open, handleClose, price, title }: ModalDialogProps) => {
 			};
 
 			setError(false);
+
 			dispatch(addOrder(newOrder));
+
+			setVolume('');
+
+			handleClose();
 		} else {
 			setError(true);
 		}
@@ -64,6 +70,16 @@ const ModalDialog = ({ open, handleClose, price, title }: ModalDialogProps) => {
 	};
 
 	const color = title === 'Buy' ? 'green' : 'red';
+
+	const errorMessage = error ? (
+		<Typography
+			color='error'
+			id='modal-modal-title'
+			variant='body1'
+			component='h5'>
+			Type number value
+		</Typography>
+	) : null;
 
 	return (
 		<Modal
@@ -114,6 +130,9 @@ const ModalDialog = ({ open, handleClose, price, title }: ModalDialogProps) => {
 					onChange={onChange}
 					sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}
 				/>
+
+				{errorMessage}
+
 				<Box
 					sx={{
 						mt: 2,
@@ -127,6 +146,7 @@ const ModalDialog = ({ open, handleClose, price, title }: ModalDialogProps) => {
 						color='error'>
 						Cancel
 					</Button>
+
 					<Button
 						onClick={onSubmit}
 						sx={{ width: '100px' }}

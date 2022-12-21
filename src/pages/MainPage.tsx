@@ -1,4 +1,5 @@
 import { SyntheticEvent, useEffect, useState } from 'react';
+import { useAppSelector } from '../core/store';
 import Box from '@mui/material/Box/Box';
 import Tab from '@mui/material/Tab/Tab';
 import Tabs from '@mui/material/Tabs/Tabs';
@@ -7,7 +8,6 @@ import Ticker from '../components/Ticker/Ticker';
 import CurrencyData from '../shared/interfaces/currencyData.interface';
 import PriceBox from '../components/PriceBox/PriceBox';
 import Archive from '../components/Archive/Archive';
-import { useAppSelector } from '../core/store';
 
 const MainPage = () => {
 	const [tab, setTab] = useState<number>(0);
@@ -35,7 +35,7 @@ const MainPage = () => {
 	];
 
 	const randomValues = () => {
-		const buyValue = (Math.random() * (2 - 0)).toFixed(4);
+		const buyValue = (Math.random() * (2 - 0.1) + 0.1).toFixed(4);
 		const sellValue = (
 			+buyValue -
 			(Math.random() * (0.03 - 0.003) + 0.003)
@@ -64,6 +64,14 @@ const MainPage = () => {
 		setTab(newValue);
 	};
 
+	const prices = instrument ? (
+		<>
+			<PriceBox title='Buy' price={buyValue} />
+
+			<PriceBox title='Sell' price={sellValue} />
+		</>
+	) : null;
+
 	return (
 		<Box sx={{ width: '100%' }}>
 			<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -90,12 +98,7 @@ const MainPage = () => {
 						paddingRight: 10,
 						mt: 4,
 					}}>
-					{instrument ? (
-						<>
-							<PriceBox title='Buy' price={buyValue} />
-							<PriceBox title='Sell' price={sellValue} />
-						</>
-					) : null}
+					{prices}
 				</Box>
 			</TabPanel>
 
