@@ -1,4 +1,6 @@
 import { useState, ChangeEvent } from 'react';
+import { addOrder } from '../../core/store/TradingSlice';
+import { useAppDispatch, useAppSelector } from '../../core/store';
 import CloseIcon from '@mui/icons-material/Close';
 import Box from '@mui/material/Box/Box';
 import Button from '@mui/material/Button/Button';
@@ -13,20 +15,14 @@ interface ModalDialogProps {
 	handleClose: () => void;
 	price: string;
 	title: string;
-	instrument: string;
-	addOrder: (order: OrderData) => void;
 }
 
-const ModalDialog = ({
-	open,
-	handleClose,
-	price,
-	title,
-	instrument,
-	addOrder,
-}: ModalDialogProps) => {
+const ModalDialog = ({ open, handleClose, price, title }: ModalDialogProps) => {
 	const [volume, setVolume] = useState<string>('');
 	const [error, setError] = useState<boolean>(false);
+	const orders = useAppSelector((state) => state.trading.orders);
+	const instrument = useAppSelector((state) => state.trading.instrument);
+	const dispatch = useAppDispatch();
 
 	const onChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const target = e.target;
@@ -37,6 +33,7 @@ const ModalDialog = ({
 	const onSubmit = () => {
 		if (!isNaN(+volume) && volume.length > 0) {
 			const timestamp = moment().format('YYYY.MM.DD HH:mm:ss');
+			const id = Math.max(...orders.map((order) => order.id), 0) + 1;
 
 			const newOrder: OrderData = {
 				side: title,
@@ -44,10 +41,11 @@ const ModalDialog = ({
 				instrument,
 				volume,
 				timestamp,
+				id,
 			};
 
 			setError(false);
-			addOrder(newOrder);
+			dispatch(addOrder(newOrder));
 		} else {
 			setError(true);
 		}

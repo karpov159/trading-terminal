@@ -1,4 +1,6 @@
-import { Dispatch, useEffect, useState, SetStateAction } from 'react';
+import { useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../core/store';
+import { changeInstrument } from '../../core/store/TradingSlice';
 import FormControl from '@mui/material/FormControl/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select/Select';
 import Typography from '@mui/material/Typography/Typography';
@@ -8,14 +10,14 @@ import MenuItem from '@mui/material/MenuItem/MenuItem';
 import CurrencyData from '../../shared/interfaces/currencyData.interface';
 
 interface TickerProps {
-	setInstrument: Dispatch<SetStateAction<string>>;
 	currenciesData: CurrencyData[];
-	instrument: string;
 }
 
-const Ticker = ({ setInstrument, currenciesData, instrument }: TickerProps) => {
+const Ticker = ({ currenciesData }: TickerProps) => {
 	const now = moment().format('HH:mm:ss');
 	const [time, setTime] = useState<string>(now);
+	const instrument = useAppSelector((state) => state.trading.instrument);
+	const dispatch = useAppDispatch();
 
 	useEffect(() => {
 		const timeout = setInterval(() => {
@@ -30,7 +32,7 @@ const Ticker = ({ setInstrument, currenciesData, instrument }: TickerProps) => {
 	}, []);
 
 	const handleChange = (e: SelectChangeEvent) => {
-		setInstrument(e.target.value as string);
+		dispatch(changeInstrument(e.target.value as string));
 	};
 
 	return (
@@ -40,6 +42,7 @@ const Ticker = ({ setInstrument, currenciesData, instrument }: TickerProps) => {
 				justifyContent: 'center',
 				alignItems: 'center',
 				flexDirection: 'column',
+				p: 3,
 			}}>
 			<Typography component='h3' variant='h3'>
 				{time}

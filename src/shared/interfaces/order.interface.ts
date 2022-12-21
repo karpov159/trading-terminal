@@ -4,6 +4,7 @@ interface OrderData {
 	instrument: string;
 	volume: string;
 	timestamp: string;
+	id: number;
 }
 
 export default OrderData;
